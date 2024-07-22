@@ -19,10 +19,10 @@ install_flashlight() {
 
   mkdir -p "${install_path}"
   mkdir -p "${bin_install_path}"
-  local bin_path="${bin_install_path}/flashlight"
-  echo "downloading flashlight ${download_url}"
-    curl -L -s "$download_url" | funzip > "${install_path}"/flashlight
-  mv "${install_path}/flashlight" "${bin_install_path}/flashlight"
+  local bin_path="${bin_install_path}/cblite"
+  echo "downloading cblite ${download_url}"
+    curl -L -s "$download_url" | funzip > "${install_path}"/cblite
+  mv "${install_path}/cblite" "${bin_install_path}/cblite"
   chmod +x $bin_path
 }
 
@@ -35,8 +35,8 @@ OS="$(uname -s)"
 
 set_filename() {
   case "$OS" in
-    "Linux") FILENAME="flashlight-linux.zip" ;;
-    "Darwin") FILENAME="flashlight-macos.zip" ;;
+    "Linux") FILENAME="linux-x86_64.zip" ;;
+    "Darwin") FILENAME="macos-x86_64.zip" ;;
   esac
 }
 
@@ -50,7 +50,7 @@ get_download_url() {
   local version="$1"
   local platform="$(get_platform)"
   local arch="$(get_arch)"
-  echo "https://github.com/bamlab/flashlight/releases/download/v${version}/$FILENAME"
+  echo "https://github.com/couchbaselabs/couchbase-mobile-tools/releases/download/cblite-${version}EE-alpha/$FILENAME"
 }
 
 set_filename
