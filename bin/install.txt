@@ -20,9 +20,12 @@ install_cblite() {
   mkdir -p "${install_path}"
   mkdir -p "${bin_install_path}"
   local bin_path="${bin_install_path}/cblite"
-  echo "downloading cblite ${download_url}"
-    curl -L -s "$download_url" | funzip > "${install_path}"/cblite
-  mv "${install_path}/cblite" "${bin_install_path}/cblite"
+  # download cblite zip file from https://github.com/couchbaselabs/couchbase-mobile-tools
+  curl -L -s "$download_url" -o "${TMPDIR}/cblite.zip"
+  # unzip the file and save to tmp folder
+  unzip -oq "${TMPDIR}/cblite.zip" -d "${TMPDIR}/cblite"
+  # move the bin file to destination
+  mv -f "${TMPDIR}/cblite/bin/cblite" "${bin_install_path}/cblite"
   chmod +x $bin_path
 }
 
