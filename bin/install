@@ -26,6 +26,9 @@ install_cblite() {
   unzip -oq "${TMPDIR}/cblite.zip" -d "${TMPDIR}/cblite"
   # move the bin file to destination
   mv -f "${TMPDIR}/cblite/bin/cblite" "${bin_install_path}/cblite"
+  if [[ "${OS}" == "Linux" ]]; then
+    mv -f "${TMPDIR}/cblite/lib" "${bin_install_path}/lib"
+  fi
   chmod +x $bin_path
 }
 
