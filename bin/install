@@ -22,8 +22,26 @@ install_cblite() {
   local bin_path="${bin_install_path}/cblite"
   # download cblite zip file from https://github.com/couchbaselabs/couchbase-mobile-tools
   curl -L -s "$download_url" -o "${TMPDIR}/cblite.zip"
-  # unzip the file and save to tmp folder
-  unzip -oq "${TMPDIR}/cblite.zip" -d "${TMPDIR}/cblite"
+
+  set +e
+  unzip -t "${TMPDIR}/cblite.zip" > /dev/null 2>&1
+  unzip_exit_code=$?
+  set -e
+
+  if [ $unzip_exit_code -ne 0 ]; then
+    rm ${TMPDIR}/cblite.zip
+
+    echo "Failed to download cblite from $download_url"
+    local fallback_download_url="$(get_fallback_download_url $version)"
+    echo "Trying to download from fallback url: $fallback_download_url"
+    curl -L -s "$fallback_download_url" -o "${TMPDIR}/cblite.tar.gz"
+
+    mkdir -p ${TMPDIR}/cblite
+    tar xzf "${TMPDIR}/cblite.tar.gz" -C "${TMPDIR}/cblite"
+  else
+    unzip -oq "${TMPDIR}/cblite.zip" -d "${TMPDIR}/cblite"
+  fi
+  
   # move the bin file to destination
   mv -f "${TMPDIR}/cblite/bin/cblite" "${bin_install_path}/cblite"
   if [[ "${OS}" == "Linux" ]]; then
@@ -46,6 +64,12 @@ set_filename() {
   esac
 }
 
+set_fallback_filename() {
+  case "$OS" in
+    "Linux") FALLBACK_FILENAME="linux-x86_64.tar.gz" ;;
+    "Darwin") FALLBACK_FILENAME="macos-x86_64.tar.gz" ;;
+  esac
+}
 
 get_arch() {
   local arch=$(uname -m)
@@ -59,5 +83,13 @@ get_download_url() {
   echo "https://github.com/couchbaselabs/couchbase-mobile-tools/releases/download/cblite-${version}EE-alpha/$FILENAME"
 }
 
+get_fallback_download_url() {
+  local version="$1"
+  local platform="$(get_platform)"
+  local arch="$(get_arch)"
+  echo "https://github.com/couchbaselabs/couchbase-mobile-tools/releases/download/cblite-${version}EE-alpha/$FALLBACK_FILENAME"
+}
+
 set_filename
+set_fallback_filename
 install_cblite $ASDF_INSTALL_TYPE $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
