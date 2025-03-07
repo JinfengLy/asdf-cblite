@@ -24,6 +24,7 @@ install_cblite() {
   curl -L -s "$download_url" -o "${TMPDIR}/cblite.zip"
 
   set +e
+  touch "${TMPDIR}/cblite.zip"
   unzip -t "${TMPDIR}/cblite.zip" > /dev/null 2>&1
   unzip_exit_code=$?
   set -e
